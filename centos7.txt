@@ -1,0 +1,110 @@
+>> yum install -y geany
+
+>> Disable firewall
+      systemctl  mask firewalld
+      systemctl stop firewalld
+      systemctl disable firewalld
+
+systemctl disable NetworkManager.service;systemctl stop NetworkManager.service
+
+>>>
+enable epel 
+wget http://dl.fedoraproject.org/pub/epel/beta/7/x86_64/epel-release-7-1.noarch.rpm
+rpm -ivh epel-release-7-1.noarch.rpm
+
+>>  {http://www.centoscn.com/CentOS/Intermediate/2014/0710/3279.html}
+修改运行级别：
+ 
+systemd使用比sysvinit的运行级更为自由的 target 概念作为替代。  
+第 3 运行级用 multi-user.target替代。第 5 运行级用graphical.target替代。runlevel3.target 和 runlevel5.target 分别是指向 multi-user.target和graphical.target的符号链接。  
+你可以使用下面的命令切换到“运行级 3 ”： 
+systemctl isolate multi-user.target (or)
+systemctl isolate runlevel3.target  
+你也可以使用下面的命令切换到“运行级 5 ”： 
+systemctl isolate graphical.target (or) 
+systemctl isolate runlevel5.target   
+如何改变默认运行级别？ 
+systemd使用链接来指向默认的运行级别。在创建新的链接前，你可以通过下面命令删除存在的链接： rm /etc/systemd/system/default.target 
+默认切换到运行级 3 ： 
+ln -sf /lib/systemd/system/multi-user.target /etc/systemd/system/default.target 
+默认切换到运行级 5 ： 
+ln -sf /lib/systemd/system/graphical.target/etc/systemd/system/default.target 
+systemd不使用/etc/inittab文件。 如何查看当下运行级别？ 
+runlevel命令在systemd下仍然可以工作。你可以继续使用它，尽管systemd使用 'target' 概念(多个的 'target' 可以同时激活)替换了之前系统的runlevel。
+等价的systemd命令是 
+systemctl list-units --type=target
+
+>> disable some sevices:
+# systemctl stop postfix
+# yum remove postfix
+
+# systemctl stop chronyd
+# yum remove chrony
+
+>>
+systemctl list-unit-files | grep -v disabled | grep service | grep enabled
+chkconfig --list | grep \:on
+systemctl list-unit-files | grep disabled
+
+>> 添加中文输入法：
+1. gnome-control-center
+Region&Language->Input sources
+添加Chinese(SunPinyin)
+2. yum install dconf-editor
+org>gnome>desktop>input sources>show-all-source
+then im-chooser
+
+>> How to setup multimedia on CentOS 7     
+https://wiki.centos.org/TipsAndTricks/MultimediaOnCentOS7
+{
+#yum -y install http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
+sudo yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
+yum install vlc smplayer  -y
+yum install smplayer vlc --disablerepo=atrpms -y
+}
+yum install -y epel-release 
+yum install -y meld stardict
+yum groupinstall "MATE Desktop" -y   (yum groupinstall 'GNOME Desktop' -y)
+
+
+
+>> trac related:
+https://trac.zencoo.com/wiki/Methodology/Development/MercurialUsage
+[root@cws113 ~]#  yum install mercurial  tortoisehg  python-psycopg2  -y
+[ryan.xu@cws113 ~]$ hg clone ssh://hg@hg.zencoo.com/misc/devhooks ~/.hghooks
+[ryan.xu@cws113 ~]$ cd .hghooks/
+[ryan.xu@cws113 .hghooks]$ ./localhook.py 
+Local hooks installer
+=====================
+User's config: /home/ryan.xu/.hgrc
+Analyzing configuration ... Done.
+Appending [hooks] section - sucessful.
+Bye.
+[ryan.xu@cws113 .hghooks]$ 
+
+>> 命令行模式：
+systemctl set-default multi-user.target
+图开模式：
+systemctl set-default graphical.target
+获取当前模式：
+systemctl  get-default
+
+在最新的 技嘉z370+i3-8100+m2 上安装centos7: ［http://www.cnblogs.com/yeeo1/p/7306611.html］
+1. 主板设成legacy
+2. 在windows上下载UltraISO并运行，
+2.1 使用UltraISO工具 文件-》打开 选择你的ISO文件  
+2.2 启动-》写入硬盘映像-》写入方式
+2.3 写入方式：USB-HDD+v2  隐藏启动分区：无
+2.4 点‘写入’
+3. 设置从u盘启动(not uefi U盘)。
+3.1 .按下键盘TAB键将最下面的vmlinuz initrd=initrd.img inst.stage2=hd:LABEL=CentOS\x207\x20x86_64 rd.live.check quiet 改为 vmlinuz initrd=initrd.img linux dd quiet
+3.2  查看U盘启动盘的名称比如：sda，sdb，sdc  ps：label一列会显示Centos7等字样的，看不到按‘r’会刷新。
+3.3 重启后到第三步界面按下TAB键
+3.4 将vmlinuz initrd=initrd.img inst.stage2=hd:LABEL=CentOS\x207\x20x86_64 rd.live.check quiet  改为  vmlinuz initrd=initrd.img inst.stage2=hd:/dev/sdb1 quiet   ps：sdb1就是你看到的启动盘名称（我这里是sda4）
+3.5 go ahead
+不行再将u盘下的UEFI目录删掉
+
+
+
+Crystal Diskinfo
+ATTO Disk Benchmark
